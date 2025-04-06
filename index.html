@@ -1,0 +1,98 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9f7ff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Symptom Checker</h1>
+        <form id="symptomForm">
+            <label for="symptom">Enter Symptom:</label>
+            <input type="text" id="symptom" name="symptom" required>
+            <button type="submit">Get Remedy</button>
+        </form>
+
+        <div id="remedyResults" class="results" style="display: none;">
+            <h3>Suggested Remedies:</h3>
+            <ul id="remedyList"></ul>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('symptomForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            
+            const symptom = document.getElementById('symptom').value;
+            const response = await fetch(`/api/remedies/${symptom}`);
+
+            if (response.ok) {
+                const remedies = await response.json();
+                displayRemedies(remedies);
+            } else {
+                alert('No remedies found for this symptom.');
+            }
+        });
+
+        function displayRemedies(remedies) {
+            const remedyList = document.getElementById('remedyList');
+            remedyList.innerHTML = '';
+
+            remedies.forEach(remedy => {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${remedy.remedyName}: ${remedy.remedyDescription}`;
+                remedyList.appendChild(listItem);
+            });
+
+            document.getElementById('remedyResults').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
